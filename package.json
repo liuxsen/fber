@@ -1,0 +1,48 @@
+{
+  "name": "bber",
+  "version": "1.0.0",
+  "engines": {
+    "node": "16.20.2",
+    "npm": "8.19.4"
+  },
+  "license": "ISC",
+  "description": "bundle builder 项目",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup --config rollup.config.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged",
+    "check:lockfile": "node ./env_check/checkLockfile",
+    "check:node": "node ./env_check/checkNode"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue,jsx,tsx}": [
+      "eslint --fix",
+      "npm run check:lockfile",
+      "npm run check:node"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    }
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "0.43.1",
+    "@commitlint/cli": "~17.5.1",
+    "@commitlint/config-conventional": "~17.4.4",
+    "@rollup/plugin-strip": "^3.0.4",
+    "chalk": "4.1.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "cz-customizable": "^7.0.0",
+    "eslint": "8.57.0",
+    "husky": "^8.0.3",
+    "lint-staged": "13.3.0",
+    "rollup": "3.29.4",
+    "semver": "7.6.0",
+    "typescript": "5.3.3"
+  }
+}
