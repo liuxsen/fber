@@ -1,7 +1,7 @@
 {
   "name": "fber",
   "version": "1.0.0",
-  "description": "前端 打包",
+  "description": "前端 打包构建工具",
   "bin": {
     "fber": "src/build.js"
   },
