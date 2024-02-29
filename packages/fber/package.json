@@ -1,0 +1,36 @@
+{
+  "name": "fber",
+  "version": "1.0.0",
+  "description": "前端 打包",
+  "bin": {
+    "fber": "src/build.js"
+  },
+  "scripts": {
+    "build": "rollup --config rollup.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "less": "^4.2.0",
+    "postcss-nested": "^6.0.1",
+    "postcss-preset-env": "^9.4.0",
+    "rollup": "3.29.4",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-postcss": "^4.0.2",
+    "typescript": "5.3.3",
+    "postcss": "8.4.35",
+    "chalk": "4.1.1",
+    "commander": "9.5.0",
+    "rimraf": "5.0.5",
+    "vite": "4.4.12",
+    "@vitejs/plugin-vue": "4.6.2",
+    "@vitejs/plugin-vue-jsx": "3.0.2",
+    "@vitejs/plugin-vue2": "2.3.1",
+    "@vitejs/plugin-vue2-jsx": "1.1.1",
+    "@vitejs/plugin-react": "4.2.1",
+    "@babel/preset-react": "7.23.3",
+    "semver": "5.7.2"
+  }
+}

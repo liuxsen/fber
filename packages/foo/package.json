@@ -1,0 +1,27 @@
+{
+  "name": "foo",
+  "version": "1.0.0",
+  "description": "vue3 组件库项目",
+  "main": "index.js",
+  "scripts": {
+    "dev": "fber dev",
+    "build": "fber build --name vueplugin"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "config": {
+    "fber": {
+      "entry": "src/components/index.js",
+      "external": {
+        "vue": "Vue"
+      }
+    }
+  },
+  "dependencies": {
+    "vue": "3.4.21"
+  },
+  "devDependencies": {
+    "fber": "workspace: *"
+  }
+}

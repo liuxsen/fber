@@ -4,5 +4,6 @@ module.exports = {
   rules: {
     'jsonc/sort-keys': 'off',
     'eslint-comments/no-unlimited-disable': 'off',
+    'curly': 'off',
   },
 }
