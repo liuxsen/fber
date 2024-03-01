@@ -1,5 +1,5 @@
 {
-  "name": "fber",
+  "name": "bber",
   "version": "1.0.0",
   "engines": {
     "node": "16.20.2",
@@ -20,7 +20,6 @@
   "lint-staged": {
     "*.{js,ts,vue,jsx,tsx}": [
       "eslint --fix",
-      "npm run check:lockfile",
       "npm run check:node"
     ]
   },

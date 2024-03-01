@@ -6,6 +6,7 @@ const { rimrafSync } = require('rimraf')
 const { getRollupPlugins } = require('./getRollupPlugins')
 const { getRollupExternal } = require('./getRollupExternal')
 const { getChunks } = require('./getChunks')
+const updatePkgJSON = require('./pkg/updatePkg')
 
 async function build(inputOptions) {
   let bundle
@@ -21,7 +22,7 @@ async function build(inputOptions) {
     })
     // an array of file names this bundle depends on
 
-    await generateOutputs(bundle, root)
+    await generateOutputs(bundle, root, inputOptions)
   }
   catch (error) {
     buildFailed = true
@@ -35,7 +36,7 @@ async function build(inputOptions) {
   process.exit(buildFailed ? 1 : 0)
 }
 
-async function generateOutputs(bundle, root) {
+async function generateOutputs(bundle, root, inputOptions) {
   rimrafSync(path.join(root, 'dist', 'cjs'))
   rimrafSync(path.join(root, 'dist', 'iife'))
   rimrafSync(path.join(root, 'dist', 'umd'))
@@ -117,6 +118,8 @@ async function generateOutputs(bundle, root) {
       }
     }
   }
+  // 更新package.json
+  updatePkgJSON(root, inputOptions.input)
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }

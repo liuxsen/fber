@@ -1,14 +1,20 @@
 {
-  "name": "bar",
-  "version": "1.0.0",
+  "name": "umd_demo_test",
+  "version": "0.0.1",
   "description": "react 组件库项目",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/umd/index.js",
   "scripts": {
     "build": "fber build --name plugin",
     "dev": "fber dev",
     "bundle": "fber bundle"
   },
+  "files": [
+    "dist/umd",
+    "dist/iife",
+    "dist/cjs",
+    "dist/es"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,7 +24,11 @@
   },
   "config": {
     "fber": {
-      "entry": "src/index.jsx"
+      "entry": "src/index.jsx",
+      "external": {
+        "react": "React",
+        "react-dom": "reactDOM"
+      }
     }
   },
   "devDependencies": {

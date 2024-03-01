@@ -37,7 +37,7 @@ importers:
     devDependencies:
       '@types/react': 18.2.60
       '@types/react-dom': 18.2.19
-      fber: link:../..
+      fber: link:../../packages/fber
 
   examples/vue-3:
     specifiers:
@@ -50,7 +50,7 @@ importers:
       moment: 2.30.1
       vue: 3.4.21
     devDependencies:
-      fber: link:../..
+      fber: link:../../packages/fber
 
   packages/fber:
     specifiers:

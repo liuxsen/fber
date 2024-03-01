@@ -51,3 +51,7 @@ fber dev 用来作为开发环境
 
 
 
+### 使用cdn地址
+
+- 指定版本 https://unpkg.com/pkg@version/dist/es/index.js
+- 最新版本 https://unpkg.com/pkg/dist/es/index.js
