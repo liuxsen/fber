@@ -9,3 +9,7 @@ function App() {
 }
 
 root.render(<App/>)
+
+export default {
+  name: 'Plugin',
+}

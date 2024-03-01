@@ -2,18 +2,26 @@
 
 > front-end builder tools 前端构建脚本
 
+可构建lib包，可构建项目
+
 - [x] 支持vue2，vue3
-- [x] 支持react 
+- [x] 支持react
+- [ ] 支持typescript
 
 
 ## install
 
-npm i fber -D
+全局使用
 
-yarn add fber -D
+- npm i fber -g
+
+项目内部使用
+
+- npm i fber -D
+- yarn add fber -D
+
 
 ## 如何使用
-
 
 在 `scripts` 中添加执行脚本
 
@@ -23,6 +31,7 @@ yarn add fber -D
 {
   "scripts": {
     "build": "fber build --name plugin",
+    "bundle": "fber bundle",
     "dev": "fber dev"
   }
 }
@@ -48,8 +57,6 @@ fber dev 用来作为开发环境
   }
 }
 ```
-
-
 
 ### 使用cdn地址
 

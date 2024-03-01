@@ -8,7 +8,7 @@ const { getRollupExternal } = require('./getRollupExternal')
 const { getChunks } = require('./getChunks')
 const updatePkgJSON = require('./pkg/updatePkg')
 
-async function build(inputOptions) {
+async function build(inputOptions, cliOptions) {
   let bundle
   let buildFailed = false
   try {
@@ -22,7 +22,9 @@ async function build(inputOptions) {
     })
     // an array of file names this bundle depends on
 
-    await generateOutputs(bundle, root, inputOptions)
+    await generateOutputs({
+      bundle, root, inputOptions, cliOptions,
+    })
   }
   catch (error) {
     buildFailed = true
@@ -36,7 +38,7 @@ async function build(inputOptions) {
   process.exit(buildFailed ? 1 : 0)
 }
 
-async function generateOutputs(bundle, root, inputOptions) {
+async function generateOutputs({ bundle, root, inputOptions, cliOptions }) {
   rimrafSync(path.join(root, 'dist', 'cjs'))
   rimrafSync(path.join(root, 'dist', 'iife'))
   rimrafSync(path.join(root, 'dist', 'umd'))
@@ -50,12 +52,12 @@ async function generateOutputs(bundle, root, inputOptions) {
     },
     {
       format: 'iife',
-      name: 'plugin',
+      name: cliOptions.pluginName,
       dir: path.join(root, 'dist', 'iife'),
     },
     {
       format: 'umd',
-      name: 'plugin',
+      name: cliOptions.pluginName,
       dir: path.join(root, 'dist', 'umd'),
     },
     {

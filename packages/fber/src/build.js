@@ -12,13 +12,15 @@ const webpackCompiler = require('./webpack/compiler')
 program.command('build')
   .description('build the app')
   .option('-n, --name <name>', 'umd 模式全局名称')
-  .action(() => {
+  .action((options) => {
     const root = process.cwd()
     const entryPath = require('./getEnty')(root)
     const { external } = getRollupExternal(root)
     build({
       input: entryPath,
       external,
+    }, {
+      pluginName: options.name,
     })
   })
 
