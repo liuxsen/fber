@@ -5,6 +5,7 @@ const chalk = require('chalk')
 const { rimrafSync } = require('rimraf')
 const { getRollupPlugins } = require('./getRollupPlugins')
 const { getRollupExternal } = require('./getRollupExternal')
+const { getChunks } = require('./getChunks')
 
 async function build(inputOptions) {
   let bundle
@@ -35,26 +36,31 @@ async function build(inputOptions) {
 }
 
 async function generateOutputs(bundle, root) {
-  rimrafSync(path.join(root, 'dist'))
+  rimrafSync(path.join(root, 'dist', 'cjs'))
+  rimrafSync(path.join(root, 'dist', 'iife'))
+  rimrafSync(path.join(root, 'dist', 'umd'))
+  rimrafSync(path.join(root, 'dist', 'es'))
   const { globals } = getRollupExternal(root)
   const outputOptionsList = [
     {
       format: 'cjs',
-      file: path.join(root, 'dist', 'index.cjs.js'),
+      dir: path.join(root, 'dist', 'cjs'),
+      manualChunks: getChunks(root),
     },
     {
       format: 'iife',
       name: 'plugin',
-      file: path.join(root, 'dist', 'index.iife.js'),
+      dir: path.join(root, 'dist', 'iife'),
     },
     {
       format: 'umd',
       name: 'plugin',
-      file: path.join(root, 'dist', 'index.umd.js'),
+      dir: path.join(root, 'dist', 'umd'),
     },
     {
       format: 'es',
-      file: path.join(root, 'dist', 'index.esm.js'),
+      dir: path.join(root, 'dist', 'es'),
+      manualChunks: getChunks(root),
     },
   ].map((item) => {
     return {

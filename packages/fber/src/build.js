@@ -6,6 +6,7 @@ const { program } = require('commander')
 const build = require('./compiler')
 const { viteDevServer } = require('./vite-dev')
 const { getRollupExternal } = require('./getRollupExternal')
+const webpackCompiler = require('./webpack/compiler')
 
 // https://github.com/tj/commander.js/blob/HEAD/Readme_zh-CN.md#%e5%ae%89%e8%a3%85
 program.command('build')
@@ -26,6 +27,13 @@ program.command('dev')
   .action(() => {
     const root = process.cwd()
     viteDevServer(root)
+  })
+
+program.command('bundle')
+  .description('打包前端项目')
+  .action(() => {
+    const root = process.cwd()
+    webpackCompiler(root)
   })
 
 program.parse(process.argv)

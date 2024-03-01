@@ -42,7 +42,7 @@ function getRollupPlugins(root) {
           ]
         : [],
     }),
-    terser(),
+    // terser(),
   ]
   if (isVue && env.version) {
     const isVue3 = semver.gt(env.version, '3.0.0')

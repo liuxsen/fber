@@ -6,7 +6,8 @@
   "module": "dist/index.esm.js",
   "scripts": {
     "build": "fber build --name plugin",
-    "dev": "fber dev"
+    "dev": "fber dev",
+    "bundle": "fber bundle"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,7 @@
   },
   "config": {
     "fber": {
-      "entry": "src/components/index.jsx"
+      "entry": "src/index.jsx"
     }
   },
   "devDependencies": {
