@@ -31,6 +31,7 @@ importers:
       fber: 'workspace: *'
       react: 18.2.0
       react-dom: 18.2.0
+      typescript: 5.3.3
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -38,6 +39,7 @@ importers:
       '@types/react': 18.2.60
       '@types/react-dom': 18.2.19
       fber: link:../../packages/fber
+      typescript: 5.3.3
 
   examples/vue-3:
     specifiers:
@@ -57,9 +59,11 @@ importers:
       '@babel/core': ^7.24.0
       '@babel/preset-env': ^7.24.0
       '@babel/preset-react': 7.23.3
+      '@babel/preset-typescript': ^7.23.3
       '@rollup/plugin-babel': 6.0.4
       '@rollup/plugin-strip': 3.0.4
       '@rollup/plugin-terser': 0.4.4
+      '@rollup/plugin-typescript': ^11.1.6
       '@vitejs/plugin-react': 4.2.1
       '@vitejs/plugin-vue': 4.6.2
       '@vitejs/plugin-vue-jsx': 3.0.2
@@ -93,9 +97,11 @@ importers:
       '@babel/core': 7.24.0
       '@babel/preset-env': 7.24.0_@babel+core@7.24.0
       '@babel/preset-react': 7.23.3_@babel+core@7.24.0
+      '@babel/preset-typescript': 7.23.3_@babel+core@7.24.0
       '@rollup/plugin-babel': 6.0.4_csrwngomdvea7vkolkwpuhjipq
       '@rollup/plugin-strip': 3.0.4_rollup@3.29.4
       '@rollup/plugin-terser': 0.4.4_rollup@3.29.4
+      '@rollup/plugin-typescript': 11.1.6_fuafrnxxjhidu5dtssvxeie5ui
       '@vitejs/plugin-react': 4.2.1_vite@4.4.12
       '@vitejs/plugin-vue': 4.6.2_vite@4.4.12
       '@vitejs/plugin-vue-jsx': 3.0.2_vite@4.4.12
@@ -1468,6 +1474,20 @@ packages:
       '@babel/plugin-transform-react-pure-annotations': 7.23.3_@babel+core@7.24.0
     dev: false
 
+  /@babel/preset-typescript/7.23.3_@babel+core@7.24.0:
+    resolution: {integrity: sha512-17oIGVlqz6CchO9RFYn5U6ZpWRZIngayYCtrPRSgANSwC2V1Jb+iP74nVxzzXJte8b8BYxrL1yY96xfhTBrNNQ==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.24.0
+      '@babel/helper-plugin-utils': 7.24.0
+      '@babel/helper-validator-option': 7.23.5
+      '@babel/plugin-syntax-jsx': 7.23.3_@babel+core@7.24.0
+      '@babel/plugin-transform-modules-commonjs': 7.23.3_@babel+core@7.24.0
+      '@babel/plugin-transform-typescript': 7.23.6_@babel+core@7.24.0
+    dev: false
+
   /@babel/regjsgen/0.8.0:
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
     dev: false
@@ -2564,6 +2584,25 @@ packages:
       serialize-javascript: 6.0.2
       smob: 1.4.1
       terser: 5.28.1
+    dev: false
+
+  /@rollup/plugin-typescript/11.1.6_fuafrnxxjhidu5dtssvxeie5ui:
+    resolution: {integrity: sha512-R92yOmIACgYdJ7dJ97p4K69I8gg6IEHt8M7dUBxN3W6nrO8uUxX5ixl0yU/N3aZTi8WhPuICvOHXQvF6FaykAA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.14.0||^3.0.0||^4.0.0
+      tslib: '*'
+      typescript: '>=3.7.0'
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+      tslib:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.1.0_rollup@3.29.4
+      resolve: 1.22.8
+      rollup: 3.29.4
+      typescript: 5.3.3
     dev: false
 
   /@rollup/pluginutils/5.1.0_rollup@3.29.4:

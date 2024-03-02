@@ -1,10 +1,12 @@
 const path = require('node:path')
 const process = require('node:process')
+const fs = require('node:fs')
 
 const fberRoot = path.join(__dirname, '..', '..')
 const root = process.cwd()
 const rootPkgJsonPath = path.join(root, 'package.json')
 const fberConfigJsPath = path.join(root, 'fber.config.js')
+const isTsProject = fs.existsSync(path.join(root, 'ts.config.json'))
 
 function getEntryPath(entry) {
   return path.join(root, entry)
@@ -16,4 +18,5 @@ module.exports = {
   rootPkgJsonPath,
   getEntryPath,
   fberConfigJsPath,
+  isTsProject,
 }

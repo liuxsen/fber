@@ -14,11 +14,28 @@ const vue2 = require('@vitejs/plugin-vue2')
 const vue2jsx = require('@vitejs/plugin-vue2-jsx')
 const { checkPkgEnv } = require('../utils/checkPkgEnv')
 
+const extensions = ['.js', '.jsx', '.tsx', '.ts', '.mjs', '.json', '.node']
 function getRollupPlugins(root) {
   const env = checkPkgEnv(root)
   const isVue = env.isVue
   const isReact = env.isReact
   const plugins = [
+    resolve({
+      browser: true,
+      extensions,
+    }),
+    commonjs(),
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
+      extensions,
+      presets: isReact
+        ? [
+            '@babel/preset-react',
+            '@babel/preset-typescript',
+          ]
+        : [],
+    }),
     strip({
       functions: ['console.log'],
     }),
@@ -30,20 +47,6 @@ function getRollupPlugins(root) {
         require('postcss-preset-env')({
         }),
       ],
-    }),
-    resolve({
-      browser: true,
-      extensions: ['.js', '.jsx', '.mjs', '.json', '.node'],
-    }),
-    commonjs(),
-    babel({
-      babelHelpers: 'bundled',
-      exclude: 'node_modules/**',
-      presets: isReact
-        ? [
-            '@babel/preset-react',
-          ]
-        : [],
     }),
     // terser(),
   ]
