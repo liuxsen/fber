@@ -3,10 +3,10 @@ const process = require('node:process')
 const { rollup } = require('rollup')
 const chalk = require('chalk')
 const { rimrafSync } = require('rimraf')
+const updatePkgJSON = require('../utils/updatePkg')
+const { getChunks } = require('./getChunks')
 const { getRollupPlugins } = require('./getRollupPlugins')
 const { getRollupExternal } = require('./getRollupExternal')
-const { getChunks } = require('./getChunks')
-const updatePkgJSON = require('./pkg/updatePkg')
 
 async function build(inputOptions, cliOptions) {
   let bundle

@@ -6,7 +6,7 @@ const vue2 = require('@vitejs/plugin-vue2')
 const vue2jsx = require('@vitejs/plugin-vue2-jsx')
 
 function getPlugins(rootdir) {
-  const { checkPkgEnv } = require('./utils/checkPkgEnv')
+  const { checkPkgEnv } = require('../utils/checkPkgEnv')
   const semver = require('semver')
 
   const env = checkPkgEnv(rootdir)

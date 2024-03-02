@@ -36,7 +36,7 @@ function getBabelOptions(root) {
 }
 
 function webpackCompiler(root) {
-  const entryPath = require('../getEnty')(root)
+  const entryPath = require('../utils/getEnty')(root)
   const distDir = path.join(root, 'dist', 'app')
 
   const webpack = require('webpack')

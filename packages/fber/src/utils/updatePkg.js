@@ -1,7 +1,7 @@
 // 构建完成之后需要更新package.json
 const path = require('node:path')
 const fs = require('node:fs')
-const getPkgJson = require('../utils/getPkgJson')
+const getPkgJson = require('./getPkgJson')
 
 function updatePkgJSON(root, entryPath) {
   const pkgPath = path.join(root, 'package.json')

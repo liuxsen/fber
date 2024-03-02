@@ -2,10 +2,10 @@
   "name": "vue3_demo",
   "version": "1.0.0",
   "description": "vue3 组件库项目",
-  "main": "index.js",
+  "main": "dist/cjs/index.js",
   "scripts": {
     "dev": "fber dev",
-    "build": "fber build --name vueplugin",
+    "build": "fber build --pluginName vueplugin",
     "bundle": "fber bundle"
   },
   "keywords": [],
@@ -18,7 +18,9 @@
         "vue": "Vue"
       },
       "chunks": {
-        "lodash-es": ["lodash-es"]
+        "lodash-es": [
+          "lodash-es"
+        ]
       }
     }
   },
@@ -29,5 +31,12 @@
   },
   "devDependencies": {
     "fber": "workspace: *"
-  }
+  },
+  "files": [
+    "dist/umd",
+    "dist/iife",
+    "dist/cjs",
+    "dist/es"
+  ],
+  "module": "dist/umd/index.js"
 }

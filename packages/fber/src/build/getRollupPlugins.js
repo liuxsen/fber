@@ -1,4 +1,6 @@
+const path = require('node:path')
 const commonjs = require('rollup-plugin-commonjs')
+
 // // 删除 console.log
 const strip = require('@rollup/plugin-strip')
 const terser = require('@rollup/plugin-terser')
@@ -10,7 +12,7 @@ const vue3 = require('@vitejs/plugin-vue')
 const vue3Jsx = require('@vitejs/plugin-vue-jsx')
 const vue2 = require('@vitejs/plugin-vue2')
 const vue2jsx = require('@vitejs/plugin-vue2-jsx')
-const { checkPkgEnv } = require('./utils/checkPkgEnv')
+const { checkPkgEnv } = require('../utils/checkPkgEnv')
 
 function getRollupPlugins(root) {
   const env = checkPkgEnv(root)
