@@ -33,6 +33,7 @@ function getRollupPlugins(root) {
     }),
     resolve({
       browser: true,
+      extensions: ['.js', '.jsx', '.mjs', '.json', '.node'],
     }),
     commonjs(),
     babel({

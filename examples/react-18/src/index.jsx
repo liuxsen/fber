@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client'
-import { Button } from './components/index.jsx'
+import { Button } from './components'
 
 const root = createRoot(document.getElementById('root'))
 function App() {
