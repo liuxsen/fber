@@ -2,7 +2,9 @@ const path = require('node:path')
 const commonjs = require('rollup-plugin-commonjs')
 
 // // 删除 console.log
+const ts = require('@rollup/plugin-typescript')
 const strip = require('@rollup/plugin-strip')
+const replace = require('rollup-plugin-replace')
 const terser = require('@rollup/plugin-terser')
 const postcss = require('rollup-plugin-postcss')
 const babel = require('@rollup/plugin-babel')
@@ -15,27 +17,36 @@ const vue2jsx = require('@vitejs/plugin-vue2-jsx')
 const { checkPkgEnv } = require('../utils/checkPkgEnv')
 
 const extensions = ['.js', '.jsx', '.tsx', '.ts', '.mjs', '.json', '.node']
+
 function getRollupPlugins(root) {
   const env = checkPkgEnv(root)
   const isVue = env.isVue
   const isReact = env.isReact
+  const isTs = env.isTsProject
   const plugins = [
+    // 可使用 `import {module} from './file'` 替换 `import {module} from './file/index.js`
     resolve({
       browser: true,
       extensions,
     }),
-    commonjs(),
+    // 替换环境变量
+    replace({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+    }),
+    commonjs({
+      extensions,
+    }),
     babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**',
       extensions,
       presets: isReact
         ? [
-            '@babel/preset-react',
-            '@babel/preset-typescript',
+            '@babel/preset-env',
           ]
         : [],
     }),
+
     strip({
       functions: ['console.log'],
     }),
@@ -50,6 +61,9 @@ function getRollupPlugins(root) {
     }),
     // terser(),
   ]
+  if (isTs) {
+    plugins.splice(2, 0, ts())
+  }
   if (isVue && env.version) {
     const isVue3 = semver.gt(env.version, '3.0.0')
     if (isVue3) {

@@ -6,7 +6,7 @@ const fberRoot = path.join(__dirname, '..', '..')
 const root = process.cwd()
 const rootPkgJsonPath = path.join(root, 'package.json')
 const fberConfigJsPath = path.join(root, 'fber.config.js')
-const isTsProject = fs.existsSync(path.join(root, 'ts.config.json'))
+const isTsProject = fs.existsSync(path.join(root, 'tsconfig.json'))
 
 function getEntryPath(entry) {
   return path.join(root, entry)
