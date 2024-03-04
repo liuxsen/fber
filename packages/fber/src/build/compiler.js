@@ -39,30 +39,28 @@ async function build(inputOptions, cliOptions) {
 }
 
 async function generateOutputs({ bundle, root, inputOptions, cliOptions }) {
-  rimrafSync(path.join(root, 'dist', 'cjs'))
-  rimrafSync(path.join(root, 'dist', 'iife'))
-  rimrafSync(path.join(root, 'dist', 'umd'))
-  rimrafSync(path.join(root, 'dist', 'es'))
+  rimrafSync(path.join(root, 'dist', 'assets'))
   const { globals } = getRollupExternal(root)
+  const pluginName = cliOptions.pluginName
   const outputOptionsList = [
     {
       format: 'cjs',
-      dir: path.join(root, 'dist', 'cjs'),
+      file: path.join(root, 'dist', 'assets', `${pluginName}.cjs.js`),
       manualChunks: getChunks(root),
     },
     {
       format: 'iife',
       name: cliOptions.pluginName,
-      dir: path.join(root, 'dist', 'iife'),
+      file: path.join(root, 'dist', 'assets', `${pluginName}.iife.js`),
     },
     {
       format: 'umd',
       name: cliOptions.pluginName,
-      dir: path.join(root, 'dist', 'umd'),
+      file: path.join(root, 'dist', 'assets', `${pluginName}.umd.js`),
     },
     {
       format: 'es',
-      dir: path.join(root, 'dist', 'es'),
+      file: path.join(root, 'dist', 'assets', `${pluginName}.es.js`),
       manualChunks: getChunks(root),
     },
   ].map((item) => {
@@ -121,7 +119,7 @@ async function generateOutputs({ bundle, root, inputOptions, cliOptions }) {
     }
   }
   // 更新package.json
-  updatePkgJSON(root, inputOptions.input)
+  updatePkgJSON(cliOptions.pluginName)
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }

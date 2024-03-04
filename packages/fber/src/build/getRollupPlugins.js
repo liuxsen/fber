@@ -15,6 +15,7 @@ const vue3Jsx = require('@vitejs/plugin-vue-jsx')
 const vue2 = require('@vitejs/plugin-vue2')
 const vue2jsx = require('@vitejs/plugin-vue2-jsx')
 const { checkPkgEnv } = require('../utils/checkPkgEnv')
+const { distRoot } = require('../utils/constants')
 
 const extensions = ['.js', '.jsx', '.tsx', '.ts', '.mjs', '.json', '.node']
 
@@ -63,7 +64,12 @@ function getRollupPlugins(root) {
     // terser(),
   ]
   if (isTs) {
-    plugins.splice(3, 0, ts())
+    plugins.splice(3, 0, ts({
+      compilerOptions: {
+        declaration: true,
+        outDir: path.join(distRoot, 'types'),
+      },
+    }))
   }
   if (isVue && env.version) {
     const isVue3 = semver.gt(env.version, '3.0.0')

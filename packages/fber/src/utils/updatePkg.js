@@ -2,20 +2,23 @@
 const path = require('node:path')
 const fs = require('node:fs')
 const getPkgJson = require('./getPkgJson')
+const { root } = require('./constants')
+const getEntryName = require('./getEntryName')
 
-function updatePkgJSON(root, entryPath) {
+function updatePkgJSON(pluginName) {
   const pkgPath = path.join(root, 'package.json')
   const json = getPkgJson(root)
+  const entryName = getEntryName()
   json.files = [
-    'dist/umd',
-    'dist/iife',
-    'dist/cjs',
-    'dist/es',
+    `dist/assets/${pluginName}.umd.js`,
+    `dist/assets/${pluginName}.iife.js`,
+    `dist/assets/${pluginName}.cjs.js`,
+    `dist/assets/${pluginName}.es.js`,
   ]
-  const extension = path.extname(entryPath)
-  const baseName = path.basename(entryPath, extension)
-  json.module = `dist/umd/${baseName}.js`
-  json.main = `dist/cjs/${baseName}.js`
+
+  json.module = `dist/assets/${pluginName}.umd.js`
+  json.main = `dist/assets/${pluginName}.cjs.js`
+  json.types = `dist/assets/types/${entryName}.d.ts`
   fs.writeFileSync(pkgPath, JSON.stringify(json, null, 2))
 }
 

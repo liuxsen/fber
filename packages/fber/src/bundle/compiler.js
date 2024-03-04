@@ -36,11 +36,10 @@ function getBabelOptions(root) {
 }
 
 function webpackCompiler(root) {
-  const entryPath = require('../utils/getEnty')(root)
+  const entryPath = require('../utils/getEnty')()
   const distDir = path.join(root, 'dist', 'app')
 
   const webpack = require('webpack')
-
   webpack({
     context: path.join(__dirname, '..', '..'),
     mode: 'none',
@@ -50,6 +49,9 @@ function webpackCompiler(root) {
       clean: true,
       filename: '[name].[contenthash].js',
       publicPath: '/',
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js', '.vue'],
     },
     module: {
       rules: [
@@ -66,6 +68,11 @@ function webpackCompiler(root) {
               presets: getBabelOptions(root),
             },
           },
+        },
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
         },
         {
           test: /\.less$/i,

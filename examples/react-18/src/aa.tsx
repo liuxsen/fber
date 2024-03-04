@@ -5,7 +5,7 @@ const root = createRoot(document.getElementById('root')!)
 
 function App() {
   return <div>
-    <Button/>
+    <Button type="primary"/>
   </div>
 }
 
