@@ -8,35 +8,24 @@
     "build": "fber build --pluginName vueplugin",
     "bundle": "fber bundle"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "config": {
-    "fber": {
-      "entry": "src/index.js",
-      "external": {
-        "vue": "Vue"
-      },
-      "chunks": {
-        "lodash-es": [
-          "lodash-es"
-        ]
-      }
-    }
-  },
-  "dependencies": {
-    "vue": "3.4.21",
-    "lodash-es": "4.17.21",
-    "moment": "2.30.1"
-  },
-  "devDependencies": {
-    "fber": "workspace: *"
-  },
   "files": [
     "dist/umd",
     "dist/iife",
     "dist/cjs",
     "dist/es"
   ],
-  "module": "dist/umd/index.js"
+  "module": "dist/umd/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "config": {},
+  "dependencies": {
+    "vue": "3.4.21",
+    "lodash-es": "4.17.21",
+    "moment": "2.30.1"
+  },
+  "devDependencies": {
+    "fber": "workspace: *",
+    "typescript": "5.3.3"
+  }
 }

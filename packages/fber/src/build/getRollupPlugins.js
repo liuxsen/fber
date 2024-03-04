@@ -36,6 +36,7 @@ function getRollupPlugins(root) {
     commonjs({
       extensions,
     }),
+    // --ts
     babel({
       babelHelpers: 'bundled',
       exclude: 'node_modules/**',
@@ -62,7 +63,7 @@ function getRollupPlugins(root) {
     // terser(),
   ]
   if (isTs) {
-    plugins.splice(2, 0, ts())
+    plugins.splice(3, 0, ts())
   }
   if (isVue && env.version) {
     const isVue3 = semver.gt(env.version, '3.0.0')
@@ -73,6 +74,7 @@ function getRollupPlugins(root) {
       plugins.unshift(vue2(), vue2jsx())
     }
   }
+
   return plugins
 }
 
