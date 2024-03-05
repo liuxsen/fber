@@ -10,10 +10,6 @@ const postcss = require('rollup-plugin-postcss')
 const babel = require('@rollup/plugin-babel')
 const resolve = require('rollup-plugin-node-resolve')
 const semver = require('semver')
-const vue3 = require('@vitejs/plugin-vue')
-const vue3Jsx = require('@vitejs/plugin-vue-jsx')
-const vue2 = require('@vitejs/plugin-vue2')
-const vue2jsx = require('@vitejs/plugin-vue2-jsx')
 const { checkPkgEnv } = require('../utils/checkPkgEnv')
 const { distRoot } = require('../utils/constants')
 
@@ -42,11 +38,9 @@ function getRollupPlugins(root) {
       babelHelpers: 'bundled',
       exclude: 'node_modules/**',
       extensions,
-      presets: isReact
-        ? [
-            '@babel/preset-env',
-          ]
-        : [],
+      presets: [
+        '@babel/preset-env',
+      ],
     }),
 
     strip({
@@ -65,6 +59,8 @@ function getRollupPlugins(root) {
   ]
   if (isTs) {
     plugins.splice(3, 0, ts({
+      // react可以直接升成ts
+      // vue3 需要使用vue-tsc
       compilerOptions: isReact
         ? {
             declaration: true,
@@ -76,10 +72,10 @@ function getRollupPlugins(root) {
   if (isVue && env.version) {
     const isVue3 = semver.gte(env.version, '3.0.0')
     if (isVue3) {
-      plugins.unshift(vue3(), vue3Jsx())
+      plugins.unshift(require('@vitejs/plugin-vue')(), require('@vitejs/plugin-vue-jsx')())
     }
     else {
-      plugins.unshift(vue2(), vue2jsx())
+      plugins.unshift(require('@vitejs/plugin-vue2')(), require('@vitejs/plugin-vue2-jsx')())
     }
   }
 
