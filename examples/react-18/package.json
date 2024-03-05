@@ -29,5 +29,5 @@
     "fber": "workspace: *",
     "typescript": "5.3.3"
   },
-  "types": "dist/assets/types/aa.d.ts"
+  "types": "dist/assets/types/index.d.ts"
 }

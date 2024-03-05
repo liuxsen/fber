@@ -7,6 +7,7 @@ const updatePkgJSON = require('../utils/updatePkg')
 const { getChunks } = require('./getChunks')
 const { getRollupPlugins } = require('./getRollupPlugins')
 const { getRollupExternal } = require('./getRollupExternal')
+const genVuets = require('./genVuets')
 
 async function build(inputOptions, cliOptions) {
   let bundle
@@ -15,7 +16,6 @@ async function build(inputOptions, cliOptions) {
     // create a bundle
     const root = process.cwd()
     const plugins = getRollupPlugins(root)
-
     bundle = await rollup({
       ...inputOptions,
       plugins,
@@ -120,6 +120,7 @@ async function generateOutputs({ bundle, root, inputOptions, cliOptions }) {
   }
   // 更新package.json
   updatePkgJSON(cliOptions.pluginName)
+  genVuets()
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }

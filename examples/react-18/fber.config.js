@@ -1,5 +1,5 @@
 module.exports = {
-  entry: 'src/aa.tsx',
+  entry: 'src/index.tsx',
   external: {
     'react': 'React',
     'react-dom': 'ReactDOM',

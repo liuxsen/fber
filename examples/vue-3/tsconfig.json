@@ -20,8 +20,7 @@
     "stripInternal": true,
     "noUnusedLocals": false, // 不检查未使用的变量
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "declaration": false // 生成d.ts文件
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

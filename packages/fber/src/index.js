@@ -28,7 +28,6 @@ program.command('build')
         options.pluginName = await inputPkgName()
       }
     }
-
     build({
       input: entryPath,
       external,

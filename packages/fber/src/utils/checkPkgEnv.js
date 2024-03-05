@@ -1,7 +1,6 @@
-const fs = require('node:fs')
-const { isTsProject } = require('./constants')
+const { isTsProject, root } = require('./constants')
 
-function checkPkgEnv(root) {
+function checkPkgEnv() {
   const pkgJson = require('./getPkgJson')(root)
   const res = {
     framework: '',

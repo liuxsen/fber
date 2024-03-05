@@ -65,14 +65,16 @@ function getRollupPlugins(root) {
   ]
   if (isTs) {
     plugins.splice(3, 0, ts({
-      compilerOptions: {
-        declaration: true,
-        outDir: path.join(distRoot, 'types'),
-      },
+      compilerOptions: isReact
+        ? {
+            declaration: true,
+            outDir: path.join(distRoot, 'types'),
+          }
+        : {},
     }))
   }
   if (isVue && env.version) {
-    const isVue3 = semver.gt(env.version, '3.0.0')
+    const isVue3 = semver.gte(env.version, '3.0.0')
     if (isVue3) {
       plugins.unshift(vue3(), vue3Jsx())
     }
