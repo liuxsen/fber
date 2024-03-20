@@ -20,7 +20,7 @@ function onAdd() {
   </div>
 </template>
 
-<style type="less">
+<style type="less" scoped>
 button {
   color: red;
 }

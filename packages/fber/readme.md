@@ -58,7 +58,30 @@ fber dev 用来作为开发环境
 }
 ```
 
-### 使用cdn地址
+### 使用fber.config.js
 
-- 指定版本 https://unpkg.com/pkg@version/dist/es/index.js
-- 最新版本 https://unpkg.com/pkg/dist/es/index.js
+```js
+// react
+module.exports = {
+  entry: 'src/index.tsx',
+  external: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+  },
+}
+```
+
+```js
+// vue
+module.exports = {
+  entry: 'src/index.ts',
+  external: {
+    vue: 'Vue',
+  },
+}
+```
+
+### 构件包的cdn地址
+
+- 指定版本 https://unpkg.com/pkg_name@version/dist/es/index.js
+- 最新版本 https://unpkg.com/pkg_name/dist/es/index.js

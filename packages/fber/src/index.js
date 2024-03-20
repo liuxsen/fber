@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 const process = require('node:process')
 const { program } = require('commander')
 const chalk = require('chalk')
@@ -8,6 +6,7 @@ const { viteDevServer } = require('./dev/vite-dev')
 const { getRollupExternal } = require('./build/getRollupExternal')
 const webpackCompiler = require('./bundle/compiler')
 const { inputPkgName } = require('./inquire')
+const getTemplateInfo = require('./template/qa')
 
 // https://github.com/tj/commander.js/blob/HEAD/Readme_zh-CN.md#%e5%ae%89%e8%a3%85
 program.command('build')
@@ -48,6 +47,12 @@ program.command('bundle')
   .action(() => {
     const root = process.cwd()
     webpackCompiler(root)
+  })
+
+program.command('init')
+  .description('下载前端模板')
+  .action(() => {
+    getTemplateInfo()
   })
 
 program.parse(process.argv)

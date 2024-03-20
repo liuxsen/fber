@@ -1,6 +1,5 @@
 const path = require('node:path')
 const fs = require('node:fs')
-const process = require('node:process')
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const semver = require('semver')
@@ -38,11 +37,12 @@ function getBabelOptions(root) {
 function webpackCompiler(root) {
   const entryPath = require('../utils/getEnty')()
   const distDir = path.join(root, 'dist', 'app')
-
+  const config = require('../utils/getFberConfig')()
   const webpack = require('webpack')
+  const NODE_ENV = config.terser !== false ? 'production' : 'development'
   webpack({
     context: path.join(__dirname, '..', '..'),
-    mode: 'none',
+    mode: NODE_ENV,
     entry: entryPath,
     output: {
       path: distDir,
@@ -50,6 +50,7 @@ function webpackCompiler(root) {
       filename: '[name].[contenthash].js',
       publicPath: '/',
     },
+    devtool: config.devtool || 'none',
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.vue'],
     },
@@ -109,7 +110,7 @@ function webpackCompiler(root) {
     plugins: [
       new webpack.DefinePlugin({ // webpack自带该插件，无需单独安装
         'process.env': {
-          NODE_ENV: process.env.NODE_ENV, // 将属性转化为全局变量，让代码中可以正常访问
+          NODE_ENV: JSON.stringify(NODE_ENV), // 将属性转化为全局变量，让代码中可以正常访问
         },
         '__VUE_OPTIONS_API__': 'true',
         '__VUE_PROD_DEVTOOLS__': 'false',

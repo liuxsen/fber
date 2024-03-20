@@ -15,7 +15,7 @@ async function build(inputOptions, cliOptions) {
   try {
     // create a bundle
     const root = process.cwd()
-    const plugins = getRollupPlugins(root)
+    const plugins = getRollupPlugins(root, cliOptions)
     bundle = await rollup({
       ...inputOptions,
       plugins,
@@ -38,7 +38,7 @@ async function build(inputOptions, cliOptions) {
   process.exit(buildFailed ? 1 : 0)
 }
 
-async function generateOutputs({ bundle, root, inputOptions, cliOptions }) {
+async function generateOutputs({ bundle, root, cliOptions }) {
   rimrafSync(path.join(root, 'dist', 'assets'))
   const { globals } = getRollupExternal(root)
   const pluginName = cliOptions.pluginName
