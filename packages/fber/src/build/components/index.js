@@ -1,72 +1,88 @@
 const path = require('node:path')
-const process = require('node:process')
+const fs = require('node:fs')
 const { rollup } = require('rollup')
 const chalk = require('chalk')
 const { rimrafSync } = require('rimraf')
-const updatePkgJSON = require('../utils/updatePkg')
-const { getChunks } = require('./getChunks')
-const { getRollupPlugins } = require('./getRollupPlugins')
-const { getRollupExternal } = require('./getRollupExternal')
-const genVuets = require('./genVuets')
+const getFberConfig = require('../../utils/getFberConfig')
+const { getRollupPlugins } = require('../getRollupPlugins')
+const { root } = require('../../utils/constants')
+const { capitalizeFirstLetter } = require('../../utils/getComponentName')
 
-async function build(inputOptions, cliOptions) {
-  let bundle
-  // const buildFailed = false
-  try {
-    // create a bundle
-    const root = process.cwd()
-    const plugins = getRollupPlugins(root)
-    bundle = await rollup({
-      ...inputOptions,
-      plugins,
-    })
-    // an array of file names this bundle depends on
-
-    await generateOutputs({
-      bundle, root, inputOptions, cliOptions,
-    })
-  }
-  catch (error) {
-    // buildFailed = true
-    // do some error reporting
-    console.error(error)
-  }
-  if (bundle) {
-    // closes the bundle
-    await bundle.close()
-  }
-  // process.exit(buildFailed ? 1 : 0)
+module.exports.buildComponents = async () => {
+  getEntryList()
 }
 
-async function generateOutputs({ bundle, root, cliOptions }) {
-  rimrafSync(path.join(root, 'dist', 'assets'))
-  const { globals } = getRollupExternal(root)
-  const pluginName = cliOptions.pluginName
+function getEntryList() {
+  const config = getFberConfig()
+  const absPath = path.join(root, config.components.entry)
+  const stat = fs.statSync(absPath)
+  if (!stat.isDirectory) {
+    // eslint-disable-next-line
+    console.log('组件入口不是文件夹')
+    return
+  }
+  const componentList = fs.readdirSync(absPath)
+  const componentListPaths = componentList.map((item) => {
+    const dir = path.join(absPath, item)
+    const files = fs.readdirSync(dir)
+    const entryFile = files.filter((item) => {
+      return item.includes('index')
+    })[0]
+    const pluginName = genComponnetName(config.components.prefix, item)
+    return [pluginName, path.join(dir, entryFile)] // [pluginName, componentPath]
+  })
+  // const entryList = componentList
+  const plugins = getRollupPlugins(root)
+  // 清空dist目录
+  rimrafSync(path.join(root, 'dist', 'components'))
+  componentListPaths.forEach((item) => {
+    build(item, plugins, config)
+  })
+}
+
+async function build([pluginName, componentPath], plugins, config) {
+  const bundle = await rollup({
+    input: componentPath,
+    plugins,
+    external: config.components.external,
+  })
+  await generateOutputs(bundle, pluginName, config)
+}
+
+function genComponnetName(prefix, name) {
+  const firstChar = capitalizeFirstLetter(name)
+  if (prefix) {
+    return prefix.toUpperCase() + firstChar
+  }
+  else {
+    return firstChar
+  }
+}
+
+async function generateOutputs(bundle, pluginName, config) {
   const outputOptionsList = [
     {
       format: 'cjs',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.cjs.js`),
-      manualChunks: getChunks(root),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.cjs.js'),
     },
     {
       format: 'iife',
-      name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.iife.js`),
+      name: pluginName,
+      file: path.join(root, 'dist', 'components', pluginName, 'index.iife.js'),
     },
     {
       format: 'umd',
-      name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.umd.js`),
+      name: pluginName,
+      file: path.join(root, 'dist', 'components', pluginName, 'index.umd.js'),
     },
     {
       format: 'es',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.es.js`),
-      manualChunks: getChunks(root),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.es.js'),
     },
   ].map((item) => {
     return {
       ...item,
-      globals,
+      globals: config.components.globals || {},
     }
   })
 
@@ -119,10 +135,8 @@ async function generateOutputs({ bundle, root, cliOptions }) {
     }
   }
   // 更新package.json
-  updatePkgJSON(cliOptions.pluginName)
-  genVuets()
+  // updatePkgJSON(cliOptions.pluginName)
+  // genVuets()
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }
-
-module.exports = build

@@ -1,72 +1,54 @@
 const path = require('node:path')
-const process = require('node:process')
 const { rollup } = require('rollup')
 const chalk = require('chalk')
-const { rimrafSync } = require('rimraf')
-const updatePkgJSON = require('../utils/updatePkg')
-const { getChunks } = require('./getChunks')
-const { getRollupPlugins } = require('./getRollupPlugins')
-const { getRollupExternal } = require('./getRollupExternal')
-const genVuets = require('./genVuets')
+const { root } = require('../../utils/constants')
+const getFberConfig = require('../../utils/getFberConfig')
+const { getRollupPlugins } = require('../getRollupPlugins')
 
-async function build(inputOptions, cliOptions) {
-  let bundle
-  // const buildFailed = false
-  try {
-    // create a bundle
-    const root = process.cwd()
-    const plugins = getRollupPlugins(root)
-    bundle = await rollup({
-      ...inputOptions,
-      plugins,
-    })
-    // an array of file names this bundle depends on
+module.exports.buildLib = async () => {
+  const config = getFberConfig()
+  const configEntry = config.lib.entry
+  const entry = path.join(root, configEntry)
+  const plugins = getRollupPlugins(root)
 
-    await generateOutputs({
-      bundle, root, inputOptions, cliOptions,
-    })
+  const bundle = await rollup({
+    input: entry,
+    plugins,
+    external: config.lib.external,
+  })
+  const pluginName = config.lib.pluginName
+  if (!pluginName) {
+    // eslint-disable-next-line
+    console.log('请配置lib模式的pluginName')
+    return
   }
-  catch (error) {
-    // buildFailed = true
-    // do some error reporting
-    console.error(error)
-  }
-  if (bundle) {
-    // closes the bundle
-    await bundle.close()
-  }
-  // process.exit(buildFailed ? 1 : 0)
+  await generateOutputs(bundle, pluginName, config)
 }
 
-async function generateOutputs({ bundle, root, cliOptions }) {
-  rimrafSync(path.join(root, 'dist', 'assets'))
-  const { globals } = getRollupExternal(root)
-  const pluginName = cliOptions.pluginName
+async function generateOutputs(bundle, pluginName, config) {
   const outputOptionsList = [
     {
       format: 'cjs',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.cjs.js`),
-      manualChunks: getChunks(root),
+      file: path.join(root, 'dist', 'lib', 'index.cjs.js'),
     },
     {
       format: 'iife',
-      name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.iife.js`),
+      name: pluginName,
+      file: path.join(root, 'dist', 'lib', 'index.iife.js'),
     },
     {
       format: 'umd',
-      name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.umd.js`),
+      name: pluginName,
+      file: path.join(root, 'dist', 'lib', 'index.umd.js'),
     },
     {
       format: 'es',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.es.js`),
-      manualChunks: getChunks(root),
+      file: path.join(root, 'dist', 'lib', 'index.es.js'),
     },
   ].map((item) => {
     return {
       ...item,
-      globals,
+      globals: config.components.globals || {},
     }
   })
 
@@ -119,10 +101,8 @@ async function generateOutputs({ bundle, root, cliOptions }) {
     }
   }
   // 更新package.json
-  updatePkgJSON(cliOptions.pluginName)
-  genVuets()
+  // updatePkgJSON(cliOptions.pluginName)
+  // genVuets()
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }
-
-module.exports = build

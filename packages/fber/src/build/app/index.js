@@ -3,7 +3,10 @@ const fs = require('node:fs')
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const semver = require('semver')
-const { checkPkgEnv } = require('../utils/checkPkgEnv')
+const chalk = require('chalk')
+const CopyPlugin = require('copy-webpack-plugin')
+const { checkPkgEnv } = require('../../utils/checkPkgEnv')
+const { root, fberRoot } = require('../../utils/constants')
 
 function getTemplate(root) {
   const templatePath = path.join(root, 'index.html')
@@ -34,25 +37,25 @@ function getBabelOptions(root) {
   return res
 }
 
-function webpackCompiler(root) {
-  const entryPath = require('../utils/getEnty')()
+function webpackCompiler() {
   const distDir = path.join(root, 'dist', 'app')
-  const config = require('../utils/getFberConfig')()
+  const config = require('../../utils/getFberConfig')()
   const webpack = require('webpack')
-  const NODE_ENV = config.terser !== false ? 'production' : 'development'
+  const entryPath = path.join(root, config.app.entry)
+  const NODE_ENV = config.app.mode || 'none'
   webpack({
-    context: path.join(__dirname, '..', '..'),
-    mode: NODE_ENV,
+    context: fberRoot,
+    mode: NODE_ENV, // development production none
     entry: entryPath,
     output: {
       path: distDir,
       clean: true,
       filename: '[name].[contenthash].js',
-      publicPath: '/',
+      publicPath: config.app.publicPath || {},
     },
-    devtool: config.devtool || 'none',
+    devtool: config.app.devtool || 'none',
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.vue'],
+      extensions: ['.vue', '.tsx', '.ts', '.js'],
     },
     module: {
       rules: [
@@ -72,7 +75,9 @@ function webpackCompiler(root) {
         },
         {
           test: /\.tsx?$/,
-          use: 'ts-loader',
+          loader: 'ts-loader',
+          // 针对vue需要配置如下，否则找不到vue文件地址
+          options: { appendTsSuffixTo: [/\.vue$/] },
           exclude: /node_modules/,
         },
         {
@@ -121,6 +126,15 @@ function webpackCompiler(root) {
       new HtmlWebpackPlugin({
         templateContent: getTemplate(root),
       }),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.join(root, config.app.staticDir),
+            to: path.join(root, 'dist', 'app', 'public'),
+            noErrorOnMissing: true,
+          },
+        ],
+      }),
     ],
     optimization: {
       splitChunks: {
@@ -163,7 +177,7 @@ function webpackCompiler(root) {
     else {
       // 处理完成
       // eslint-disable-next-line
-      console.log('打包完成')
+      console.log(chalk.green('打包完成'))
     }
   })
 }

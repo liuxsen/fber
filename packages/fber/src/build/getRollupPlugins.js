@@ -1,10 +1,12 @@
 // // 删除 console.log
 const semver = require('semver')
+// eslint-disable-next-line
 const terser = require('@rollup/plugin-terser')
 const { checkPkgEnv } = require('../utils/checkPkgEnv')
 
 const { vue3Plugin, vue2Plugin, reactPlugin } = require('./plugins')
 
+// eslint-disable-next-line
 function getRollupPlugins(root, cliOptions) {
   const env = checkPkgEnv(root)
   const isVue = env.isVue
@@ -23,9 +25,9 @@ function getRollupPlugins(root, cliOptions) {
   if (isReact) {
     plugins = reactPlugin
   }
-  if (cliOptions.terser) {
-    plugins.push(terser())
-  }
+  // if (cliOptions.terser) {
+  //   plugins.push(terser())
+  // }
   return plugins
 }
 

@@ -2,16 +2,12 @@ const path = require('node:path')
 const process = require('node:process')
 const { rollup } = require('rollup')
 const chalk = require('chalk')
-const { rimrafSync } = require('rimraf')
-const updatePkgJSON = require('../utils/updatePkg')
 const { getChunks } = require('./getChunks')
 const { getRollupPlugins } = require('./getRollupPlugins')
-const { getRollupExternal } = require('./getRollupExternal')
-const genVuets = require('./genVuets')
 
 async function build(inputOptions, cliOptions) {
   let bundle
-  // const buildFailed = false
+  // let buildFailed = false
   try {
     // create a bundle
     const root = process.cwd()
@@ -19,6 +15,7 @@ async function build(inputOptions, cliOptions) {
     bundle = await rollup({
       ...inputOptions,
       plugins,
+      external: ['vue'],
     })
     // an array of file names this bundle depends on
 
@@ -39,34 +36,34 @@ async function build(inputOptions, cliOptions) {
 }
 
 async function generateOutputs({ bundle, root, cliOptions }) {
-  rimrafSync(path.join(root, 'dist', 'assets'))
-  const { globals } = getRollupExternal(root)
   const pluginName = cliOptions.pluginName
   const outputOptionsList = [
     {
       format: 'cjs',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.cjs.js`),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.cjs.js'),
       manualChunks: getChunks(root),
     },
     {
       format: 'iife',
       name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.iife.js`),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.iife.js'),
     },
     {
       format: 'umd',
       name: cliOptions.pluginName,
-      file: path.join(root, 'dist', 'assets', `${pluginName}.umd.js`),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.umd.js'),
     },
     {
       format: 'es',
-      file: path.join(root, 'dist', 'assets', `${pluginName}.es.js`),
+      file: path.join(root, 'dist', 'components', pluginName, 'index.es.js'),
       manualChunks: getChunks(root),
     },
   ].map((item) => {
     return {
       ...item,
-      globals,
+      globals: {
+        vue: 'Vue',
+      },
     }
   })
 
@@ -119,8 +116,8 @@ async function generateOutputs({ bundle, root, cliOptions }) {
     }
   }
   // 更新package.json
-  updatePkgJSON(cliOptions.pluginName)
-  genVuets()
+  // updatePkgJSON(cliOptions.pluginName)
+  // genVuets()
   // eslint-disable-next-line
   console.log(chalk.green('构建完成'))
 }

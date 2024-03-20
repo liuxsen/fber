@@ -1,7 +1,8 @@
 const { createServer } = require('vite')
+const { checkPkgEnv } = require('../../utils/checkPkgEnv')
+const getConfig = require('../../utils/getFberConfig')
 
 function getPlugins(rootdir) {
-  const { checkPkgEnv } = require('../utils/checkPkgEnv')
   const semver = require('semver')
 
   const env = checkPkgEnv(rootdir)
@@ -24,14 +25,13 @@ function getPlugins(rootdir) {
 }
 
 async function viteDevServer(rootdir) {
+  const config = getConfig()
   const server = await createServer({
     // any valid user config options, plus `mode` and `configFile`
     configFile: false,
     root: rootdir,
     plugins: getPlugins(rootdir),
-    server: {
-      port: 1337,
-    },
+    server: config.dev.server,
   })
   await server.listen()
 

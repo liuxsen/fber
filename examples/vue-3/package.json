@@ -5,8 +5,9 @@
   "main": "dist/assets/aa.cjs.js",
   "scripts": {
     "dev": "fber dev",
-    "build": "fber build --pluginName aa",
-    "bundle": "fber bundle"
+    "components": "fber components",
+    "lib": "fber lib",
+    "app": "fber app"
   },
   "files": [
     "dist/assets/aa.umd.js",

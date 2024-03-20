@@ -38,7 +38,7 @@ exports.vue3Plugin = [
     functions: ['console.log'],
   }),
   postcss({
-    extract: 'css/index.css', // 是否提取css
+    // extract: 'css/index.css', // 是否提取css
     minimize: true,
     extensions: ['.less', '.css'],
     plugins: [
