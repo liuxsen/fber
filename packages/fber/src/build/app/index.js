@@ -1,20 +1,12 @@
 const path = require('node:path')
-const fs = require('node:fs')
-const { VueLoaderPlugin } = require('vue-loader')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
 const semver = require('semver')
 const chalk = require('chalk')
-const CopyPlugin = require('copy-webpack-plugin')
-const { checkPkgEnv } = require('../../utils/checkPkgEnv')
-const { root, fberRoot } = require('../../utils/constants')
 
-function getTemplate(root) {
-  const templatePath = path.join(root, 'index.html')
-  const template = fs.readFileSync(templatePath, 'utf-8')
-  // 删除type module的注入方式
-  const res = template.replace(/<script.*?type="module".*?><\/script>/g, '')
-  return res
-}
+const { root, fberRoot } = require('../../utils/constants')
+const { checkPkgEnv } = require('../../utils/checkPkgEnv')
+const { getTsAlias } = require('../../utils/getAlias')
+const { vue3Plugin } = require('./plugins')
 
 function getBabelOptions(root) {
   const env = checkPkgEnv(root)
@@ -40,7 +32,6 @@ function getBabelOptions(root) {
 function webpackCompiler() {
   const distDir = path.join(root, 'dist', 'app')
   const config = require('../../utils/getFberConfig')()
-  const webpack = require('webpack')
   const entryPath = path.join(root, config.app.entry)
   const NODE_ENV = config.app.mode || 'none'
   webpack({
@@ -56,6 +47,7 @@ function webpackCompiler() {
     devtool: config.app.devtool || 'none',
     resolve: {
       extensions: ['.vue', '.tsx', '.ts', '.js'],
+      alias: getTsAlias(),
     },
     module: {
       rules: [
@@ -77,7 +69,10 @@ function webpackCompiler() {
           test: /\.tsx?$/,
           loader: 'ts-loader',
           // 针对vue需要配置如下，否则找不到vue文件地址
-          options: { appendTsSuffixTo: [/\.vue$/] },
+          options: {
+            appendTsSuffixTo: [/\.vue$/],
+            transpileOnly: true,
+          },
           exclude: /node_modules/,
         },
         {
@@ -112,31 +107,10 @@ function webpackCompiler() {
 
       ],
     },
-    plugins: [
-      new webpack.DefinePlugin({ // webpack自带该插件，无需单独安装
-        'process.env': {
-          NODE_ENV: JSON.stringify(NODE_ENV), // 将属性转化为全局变量，让代码中可以正常访问
-        },
-        '__VUE_OPTIONS_API__': 'true',
-        '__VUE_PROD_DEVTOOLS__': 'false',
-        '__VUE_PROD_HYDRATION_MISMATCH_DETAILS__': 'false',
-      }),
-      // 请确保引入这个插件！
-      new VueLoaderPlugin(),
-      new HtmlWebpackPlugin({
-        templateContent: getTemplate(root),
-      }),
-      new CopyPlugin({
-        patterns: [
-          {
-            from: path.join(root, config.app.staticDir),
-            to: path.join(root, 'dist', 'app', 'public'),
-            noErrorOnMissing: true,
-          },
-        ],
-      }),
-    ],
+    externals: config.app.externals,
+    plugins: vue3Plugin(NODE_ENV, config),
     optimization: {
+      realContentHash: true,
       splitChunks: {
         cacheGroups: {
           'moment': {
@@ -166,13 +140,13 @@ function webpackCompiler() {
       return
     }
 
-    const info = stats.toJson()
+    // const info = stats.toJson()
 
     if (stats.hasWarnings()) {
-      console.warn(info.warnings)
+      // console.warn(info.warnings)
     }
     if (stats.hasErrors()) {
-      console.error(info.errors)
+      // console.error(info.errors)
     }
     else {
       // 处理完成

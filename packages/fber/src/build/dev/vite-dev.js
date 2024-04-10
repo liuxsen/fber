@@ -1,6 +1,11 @@
+const path = require('node:path')
 const { createServer } = require('vite')
+const UnoCSS = require('unocss/vite')
+const VueDevTools = require('vite-plugin-vue-devtools')
 const { checkPkgEnv } = require('../../utils/checkPkgEnv')
 const getConfig = require('../../utils/getFberConfig')
+const { getTsAlias } = require('../../utils/getAlias')
+const { root } = require('../../utils/constants')
 
 function getPlugins(rootdir) {
   const semver = require('semver')
@@ -14,14 +19,23 @@ function getPlugins(rootdir) {
   if (env.isVue) {
     const isVue3 = semver.gt(env.version, '3.0.0')
     if (isVue3) {
-      plugins.push([require('@vitejs/plugin-vue')(), require('@vitejs/plugin-vue-jsx')()])
+      plugins.push(
+        [
+          VueDevTools(),
+          require('@vitejs/plugin-vue')(),
+          require('@vitejs/plugin-vue-jsx')({
+            include: [/\.[jt]sx$/],
+          }),
+          UnoCSS.default(),
+        ],
+      )
     }
     else {
       plugins.push([require('@vitejs/plugin-vue2')(), require('@vitejs/plugin-vue2-jsx')()])
     }
   }
-
-  return plugins
+  const res = plugins
+  return res
 }
 
 async function viteDevServer(rootdir) {
@@ -29,6 +43,10 @@ async function viteDevServer(rootdir) {
   const server = await createServer({
     // any valid user config options, plus `mode` and `configFile`
     configFile: false,
+    resolve: {
+      alias: getTsAlias(),
+    },
+    publicDir: path.join(root, config.dev.staticDir || 'public'),
     root: rootdir,
     plugins: getPlugins(rootdir),
     server: config.dev.server,

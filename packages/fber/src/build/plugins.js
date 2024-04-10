@@ -7,19 +7,19 @@ const babel = require('@rollup/plugin-babel')
 const resolve = require('rollup-plugin-node-resolve')
 const commonjs = require('rollup-plugin-commonjs')
 
-const extensions = ['.js', '.jsx', '.tsx', '.mjs', '.json', '.node']
+const extensions = ['.js', '.jsx', '.mjs', '.json', '.node']
 
 exports.vue3Plugin = [
-  ts(),
-  // 可使用 `import {module} from './file'` 替换 `import {module} from './file/index.js`
   resolve({
     browser: true,
-    extensions,
+    extensions: ['.js', '.jsx', '.vue', '.mjs', '.json', '.node'],
   }),
-  commonjs({
-    extensions: ['.js', '.jsx', '.mjs', '.json', '.node'],
+  commonjs(),
+  ts({
+    extensions: ['.js', '.jsx', '.mjs', '.vue', '.json', '.node'],
+    check: false,
   }),
-  // 替换环境变量
+
   replace({
     'process.env.NODE_ENV': JSON.stringify('production'),
   }),
@@ -33,14 +33,13 @@ exports.vue3Plugin = [
       '@babel/preset-env',
     ],
   }),
-
   strip({
     functions: ['console.log'],
   }),
   postcss({
-    // extract: 'css/index.css', // 是否提取css
     minimize: true,
     extensions: ['.less', '.css'],
+    extract: 'css/index.css', // 是否提取css
     plugins: [
       require('postcss-preset-env')({
       }),
@@ -88,7 +87,7 @@ exports.vue2Plugin = [
 
 exports.reactPlugin = [
   commonjs({
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.json', '.node'],
+    extensions,
   }),
   resolve({
     browser: true,

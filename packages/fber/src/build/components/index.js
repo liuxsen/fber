@@ -21,22 +21,33 @@ function getEntryList() {
     console.log('组件入口不是文件夹')
     return
   }
-  const componentList = fs.readdirSync(absPath)
-  const componentListPaths = componentList.map((item) => {
-    const dir = path.join(absPath, item)
-    const files = fs.readdirSync(dir)
-    const entryFile = files.filter((item) => {
-      return item.includes('index')
-    })[0]
-    const pluginName = genComponnetName(config.components.prefix, item)
-    return [pluginName, path.join(dir, entryFile)] // [pluginName, componentPath]
+  const dirs = fs.readdirSync(absPath)
+  const list = dirs.map((item) => {
+    const filePath = path.join(absPath, item)
+    const fileState = fs.statSync(filePath)
+    const isDir = fileState.isDirectory()
+    const componentPath = path.join(filePath, 'index.ts')
+    const isComponent = fs.existsSync(componentPath)
+
+    const fullPath = isDir && isComponent ? componentPath : filePath
+    return {
+      name: item,
+      isDir,
+      isComponent,
+      fullPath,
+    }
   })
-  // const entryList = componentList
   const plugins = getRollupPlugins(root)
-  // 清空dist目录
+  // // 清空dist目录
   rimrafSync(path.join(root, 'dist', 'components'))
-  componentListPaths.forEach((item) => {
-    build(item, plugins, config)
+  list.forEach((item) => {
+    if (!item.isComponent) {
+      return
+    }
+    build([
+      item.name,
+      item.fullPath,
+    ], plugins, config)
   })
 }
 
@@ -49,7 +60,7 @@ async function build([pluginName, componentPath], plugins, config) {
   await generateOutputs(bundle, pluginName, config)
 }
 
-function genComponnetName(prefix, name) {
+function _genComponnetName(prefix, name) {
   const firstChar = capitalizeFirstLetter(name)
   if (prefix) {
     return prefix.toUpperCase() + firstChar
@@ -85,14 +96,14 @@ async function generateOutputs(bundle, pluginName, config) {
       globals: config.components.globals || {},
     }
   })
-
-  for (const outputOptions of outputOptionsList) {
+  try {
+    for (const outputOptions of outputOptionsList) {
     // generate output specific code in-memory
     // you can call this function multiple times on the same bundle object
     // replace bundle.generate with bundle.write to directly write to disk
-    const { output } = await bundle.write(outputOptions)
-    for (const chunkOrAsset of output) {
-      if (chunkOrAsset.type === 'asset') {
+      const { output } = await bundle.write(outputOptions)
+      for (const chunkOrAsset of output) {
+        if (chunkOrAsset.type === 'asset') {
         // For assets, this contains
         // {
         //   fileName: string,              // the asset file name
@@ -100,8 +111,8 @@ async function generateOutputs(bundle, pluginName, config) {
         //   type: 'asset'                  // signifies that this is an asset
         // }
         // console.log('Asset', chunkOrAsset)
-      }
-      else {
+        }
+        else {
         // For chunks, this contains
         // {
         //   code: string,                  // the generated JS code
@@ -131,8 +142,13 @@ async function generateOutputs(bundle, pluginName, config) {
         //   type: 'chunk',                 // signifies that this is a chunk
         // }
         // console.log('Chunk', chunkOrAsset.modules)
+        }
       }
     }
+  }
+  catch (error) {
+    // eslint-disable-next-line no-console
+    console.log(error)
   }
   // 更新package.json
   // updatePkgJSON(cliOptions.pluginName)

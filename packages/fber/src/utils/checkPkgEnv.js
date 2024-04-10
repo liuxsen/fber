@@ -15,6 +15,10 @@ function checkPkgEnv() {
     res.framework = 'vue'
     res.version = pkgJson.dependencies.vue
   }
+  else if (pkgJson.peerDependencies && pkgJson.peerDependencies.vue) {
+    res.framework = 'vue'
+    res.version = pkgJson.peerDependencies.vue
+  }
 
   return {
     isReact: res.framework === 'react',

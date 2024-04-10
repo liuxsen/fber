@@ -1,6 +1,6 @@
 const process = require('node:process')
 // misc/checkNode.js
-const { engines } = require('../package')
+const { engines } = require('../package.json')
 
 let semver = null
 try {

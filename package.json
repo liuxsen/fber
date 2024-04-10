@@ -2,8 +2,8 @@
   "name": "bber",
   "version": "1.0.0",
   "engines": {
-    "node": "16.20.2",
-    "npm": "8.19.4"
+    "node": "18.17.1",
+    "npm": "9.6.7"
   },
   "license": "ISC",
   "description": "前端 builder 项目",

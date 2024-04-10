@@ -1,18 +1,34 @@
 const path = require('node:path')
 const { rollup } = require('rollup')
 const chalk = require('chalk')
+const { globSync } = require('glob')
+// const shelljs = require('shelljs')
 const { root } = require('../../utils/constants')
 const getFberConfig = require('../../utils/getFberConfig')
 const { getRollupPlugins } = require('../getRollupPlugins')
 
 module.exports.buildLib = async () => {
   const config = getFberConfig()
-  const configEntry = config.lib.entry
-  const entry = path.join(root, configEntry)
+  // const configEntry = config.lib.entry
+  // const entry = path.join(root, configEntry)
   const plugins = getRollupPlugins(root)
-
+  const list = Object.fromEntries(globSync('src/**/*.{ts,vue,less}').map(file => [
+    // 这里将删除 `src/` 以及每个文件的扩展名。
+    // 因此，例如 src/nested/foo.js 会变成 nested/foo
+    path.relative(
+      'src',
+      file.slice(0, file.length - path.extname(file).length),
+    ),
+    // 这里可以将相对路径扩展为绝对路径，例如
+    // src/nested/foo 会变成 /project/src/nested/foo.js
+    // fileURLToPath(new URL(file, import.meta.url)),
+    path.join(root, file),
+  ]))
   const bundle = await rollup({
-    input: entry,
+    input: list,
+    // {
+    // 'Value/index': '/Users/liuxsen/study/tpls/vue3/packages/ui/src/Value/index.ts',
+    // },
     plugins,
     external: config.lib.external,
   })
@@ -23,31 +39,35 @@ module.exports.buildLib = async () => {
     return
   }
   await generateOutputs(bundle, pluginName, config)
+  // shelljs.exec('npx tsc')
 }
 
 async function generateOutputs(bundle, pluginName, config) {
   const outputOptionsList = [
     {
       format: 'cjs',
-      file: path.join(root, 'dist', 'lib', 'index.cjs.js'),
+      dir: path.join(root, 'dist', 'lib'),
     },
-    {
-      format: 'iife',
-      name: pluginName,
-      file: path.join(root, 'dist', 'lib', 'index.iife.js'),
-    },
-    {
-      format: 'umd',
-      name: pluginName,
-      file: path.join(root, 'dist', 'lib', 'index.umd.js'),
-    },
+    // {
+    //   format: 'iife',
+    //   name: pluginName,
+    //   file: path.join(root, 'dist', 'lib', 'index.iife.js'),
+    // },
+    // {
+    //   format: 'umd',
+    //   name: pluginName,
+    //   file: path.join(root, 'dist', 'lib', 'index.umd.js'),
+    // },
     {
       format: 'es',
-      file: path.join(root, 'dist', 'lib', 'index.es.js'),
+      dir: path.join(root, 'dist', 'es'),
     },
   ].map((item) => {
     return {
       ...item,
+      preserveModules: true,
+      preserveModulesRoot: root,
+      exports: 'named',
       globals: config.components.globals || {},
     }
   })
